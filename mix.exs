@@ -33,7 +33,7 @@ defmodule OpenaiEx.MixProject do
     [
       {:finch, "~> 0.20"},
       {:jason, "~> 1.4"},
-      {:multipart, "~> 0.4"},
+      {:multipart, "~> 0.6"},
       {:ex_doc, ">= 0.0.0", only: :docs},
       {:credo, "~> 1.7", only: :dev, runtime: false},
       {:dialyxir, "~> 1.4", only: :dev, runtime: false}

@@ -64,10 +64,10 @@ defmodule OpenaiEx.Http do
         Multipart.Part.file_field(path, k)
 
       {filename, content} ->
-        Multipart.Part.file_content_field(filename, content, k, filename: filename)
+        Multipart.Part.file_content_field(filename, content, k, [], filename: filename)
 
       content ->
-        Multipart.Part.file_content_field("", content, k, filename: "")
+        Multipart.Part.file_content_field("", content, k, [], filename: "")
     end
   end
 
