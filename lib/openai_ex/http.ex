@@ -45,17 +45,19 @@ defmodule OpenaiEx.Http do
 
     req
     |> Map.take(file_fields)
-    |> Enum.reduce(mp, fn {k, v}, acc ->
-      case v do
-        list when is_list(list) ->
-          Enum.reduce(list, acc, fn item, inner_acc ->
-            inner_acc |> Multipart.add_part(to_file_field_part("#{k}[]", item))
-          end)
+    |> Enum.reduce(mp, fn {k, v}, acc -> add_file_parts(acc, k, v) end)
+  end
 
-        _ ->
-          acc |> Multipart.add_part(to_file_field_part(k, v))
-      end
-    end)
+  defp add_file_parts(acc, k, v) do
+    case v do
+      list when is_list(list) ->
+        Enum.reduce(list, acc, fn item, inner_acc ->
+          inner_acc |> Multipart.add_part(to_file_field_part("#{k}[]", item))
+        end)
+
+      _ ->
+        acc |> Multipart.add_part(to_file_field_part(k, v))
+    end
   end
 
   defp to_file_field_part(k, v) do

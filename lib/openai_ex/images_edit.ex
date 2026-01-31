@@ -26,7 +26,7 @@ defmodule OpenaiEx.Images.Edit do
   end
 
   @doc false
-  def file_fields() do
+  def file_fields do
     [:image, :mask]
   end
 end

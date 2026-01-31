@@ -2,7 +2,7 @@ defmodule OpenaiEx.Images do
   @moduledoc """
   This module provides an implementation of the OpenAI images API. The API reference can be found at https://platform.openai.com/docs/api-reference/images.
   """
-  alias OpenaiEx.{Images, Http}
+  alias OpenaiEx.{Http, Images}
 
   @doc """
   Calls the image generation endpoint.

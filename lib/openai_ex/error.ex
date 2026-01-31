@@ -105,7 +105,7 @@ defmodule OpenaiEx.Error do
   def status_error(status_code, response, body) when status_code in 500..599,
     do: status_error(:internal_server_error, 500, response, body)
 
-  defp status_error(kind, status_code, response, body) when is_list(body) and length(body) > 0 do
+  defp status_error(kind, status_code, response, body) when is_list(body) and body != [] do
     status_error(kind, status_code, response, List.first(body))
   end
 
@@ -124,11 +124,11 @@ defmodule OpenaiEx.Error do
     )
   end
 
-  def sse_timeout_error() do
+  def sse_timeout_error do
     exception(kind: :sse_timeout_error, message: "SSE next chunk timed out.")
   end
 
-  def sse_user_cancellation() do
+  def sse_user_cancellation do
     exception(kind: :sse_cancellation, message: "SSE user canceled.")
   end
 end

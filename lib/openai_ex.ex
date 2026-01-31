@@ -135,7 +135,7 @@ defmodule OpenaiEx do
   end
 
   @doc false
-  def list_query_fields() do
+  def list_query_fields do
     [
       :after,
       :before,

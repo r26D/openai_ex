@@ -105,7 +105,7 @@ defmodule OpenaiEx.Files do
   end
 
   @doc false
-  def file_fields() do
+  def file_fields do
     [:file]
   end
 end

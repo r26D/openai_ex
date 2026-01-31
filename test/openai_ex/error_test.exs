@@ -15,7 +15,7 @@ defmodule OpenaiEx.ErrorTest do
       assert result.body == body
     end
 
-    test "when body is a map and body[\"error\"][\"message\"] is missing, returns Error with fallback message" do
+    test ~s(when body is a map and body["error"]["message"] is missing, returns Error with fallback message) do
       response = %{status: 422, headers: []}
       body = %{"error" => %{"code" => "invalid"}}
       result = Error.status_error(422, response, body)

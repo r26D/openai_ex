@@ -24,7 +24,7 @@ defmodule OpenaiEx.Images.Variation do
   end
 
   @doc false
-  def file_fields() do
+  def file_fields do
     [:image]
   end
 end

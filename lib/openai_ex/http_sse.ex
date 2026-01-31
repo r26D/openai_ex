@@ -1,7 +1,7 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
-  alias OpenaiEx.HttpFinch
   alias OpenaiEx.Error
+  alias OpenaiEx.HttpFinch
   require Logger
 
   # based on
@@ -31,15 +31,20 @@ defmodule OpenaiEx.HttpSse do
         body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
         {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
       else
-        with {:ok, body} <- extract_error(ref, "", openai.receive_timeout) do
-          response = %{status: status, headers: headers, body: body}
-          {:error, Error.status_error(status, response, body)}
-        else
-          error_result -> handle_receive_error(error_result, request)
-        end
+        handle_non_2xx_status(openai, status, headers, request, ref)
       end
     else
       error_result -> handle_receive_error(error_result, request)
+    end
+  end
+
+  defp handle_non_2xx_status(openai, status, headers, request, ref) do
+    case extract_error(ref, "", openai.receive_timeout) do
+      {:ok, body} ->
+        response = %{status: status, headers: headers, body: body}
+        {:error, Error.status_error(status, response, body)}
+      error_result ->
+        handle_receive_error(error_result, request)
     end
   end
 
@@ -51,6 +56,7 @@ defmodule OpenaiEx.HttpSse do
   end
 
   defp finch_stream(openai = %OpenaiEx{}, request, me, ref) do
+    # credo:disable-for-next-line Credo.Check.Readability.PreferImplicitTry
     try do
       case HttpFinch.stream(request, openai, create_chunk_sender(me, ref)) do
         {:ok, _acc} -> send(me, {:done, ref})

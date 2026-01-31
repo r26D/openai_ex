@@ -77,9 +77,10 @@ defmodule OpenaiEx.HttpFinch do
   defp to_response(r = %Finch.Response{status: status, body: body})
        when is_integer(status) do
     decoded_body =
-      with {:ok, json} <- Jason.decode(body),
-           do: json,
-           else: ({:error, _} -> %{"error" => %{"message" => "#{inspect(body)}"}})
+      case Jason.decode(body) do
+        {:ok, json} -> json
+        {:error, _} -> %{"error" => %{"message" => "#{inspect(body)}"}}
+      end
 
     {:error, Error.status_error(status, r, decoded_body)}
   end
