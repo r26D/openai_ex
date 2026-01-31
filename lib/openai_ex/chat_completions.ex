@@ -4,6 +4,7 @@ defmodule OpenaiEx.Chat.Completions do
   """
   alias OpenaiEx.{Http, HttpSse}
 
+  # max_input_tokens is not a Chat Completions API parameter; do not add it.
   @api_fields [
     :messages,
     :model,
@@ -45,6 +46,9 @@ defmodule OpenaiEx.Chat.Completions do
 
       iex> _request = OpenaiEx.Chat.Completions.new(%{model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")]})
       %{messages: [%{content: "Hello, world!", role: "user"}], model: "davinci"}
+
+      iex> _request = OpenaiEx.Chat.Completions.new(model: "gpt-5-mini", messages: [%{role: "user", content: "Hi"}], max_completion_tokens: 100, reasoning_effort: "low")
+      %{model: "gpt-5-mini", messages: [%{role: "user", content: "Hi"}], max_completion_tokens: 100, reasoning_effort: "low"}
   """
 
   def new(args = [_ | _]) do
@@ -56,6 +60,18 @@ defmodule OpenaiEx.Chat.Completions do
   end
 
   @ep_url "/chat/completions"
+
+  defp prepare_create_body(map) do
+    map |> Map.take(@api_fields) |> maybe_drop_max_tokens()
+  end
+
+  defp maybe_drop_max_tokens(map) do
+    if Map.has_key?(map, :max_completion_tokens) do
+      Map.delete(map, :max_tokens)
+    else
+      map
+    end
+  end
 
   defp ep_url(completion_id \\ nil, action \\ nil) do
     @ep_url <>
@@ -74,9 +90,8 @@ defmodule OpenaiEx.Chat.Completions do
 
   def create(openai = %OpenaiEx{}, chat_completion = %{}, stream: true) do
     ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
-
-    openai
-    |> HttpSse.post(ep, json: chat_completion |> Map.take(@api_fields) |> Map.put(:stream, true))
+    body = chat_completion |> prepare_create_body() |> Map.put(:stream, true)
+    openai |> HttpSse.post(ep, json: body)
   end
 
   def create!(openai = %OpenaiEx{}, chat_completion = %{}) do
@@ -85,7 +100,7 @@ defmodule OpenaiEx.Chat.Completions do
 
   def create(openai = %OpenaiEx{}, chat_completion = %{}) do
     ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
-    openai |> Http.post(ep, json: chat_completion |> Map.take(@api_fields))
+    openai |> Http.post(ep, json: prepare_create_body(chat_completion))
   end
 
   @doc """

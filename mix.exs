@@ -36,7 +36,8 @@ defmodule OpenaiEx.MixProject do
       {:multipart, "~> 0.6"},
       {:ex_doc, ">= 0.0.0", only: :docs},
       {:credo, "~> 1.7", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.4", only: :dev, runtime: false}
+      {:dialyxir, "~> 1.4", only: :dev, runtime: false},
+      {:patch, "~> 0.12", only: :test}
     ]
   end
 

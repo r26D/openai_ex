@@ -111,12 +111,14 @@ defmodule OpenaiEx.Error do
 
   defp status_error(kind, status_code, response, body) when is_map(body) do
     error = body["error"]
+    message = get_in(body, ["error", "message"]) || "HTTP #{status_code}"
+    stored_body = if is_map(error), do: error, else: body
 
     exception(
       kind: kind,
-      message: error["message"],
+      message: message,
       response: response,
-      body: error,
+      body: stored_body,
       status_code: status_code,
       request_id: get_in(response.headers, [Access.filter(&(elem(&1, 0) == "x-request-id")), Access.elem(1)])
     )
