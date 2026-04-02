@@ -20,6 +20,8 @@ defmodule OpenaiEx.Chat.Completions do
     :parallel_tool_calls,
     :prediction,
     :presence_penalty,
+    :prompt_cache_key,
+    :prompt_cache_retention,
     :reasoning_effort,
     :response_format,
     :seed,
@@ -33,6 +35,7 @@ defmodule OpenaiEx.Chat.Completions do
     :tools,
     :tool_choice,
     :user,
+    :verbosity,
     :web_search_options
   ]
 
