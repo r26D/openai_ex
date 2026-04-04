@@ -36,7 +36,10 @@ defmodule OpenaiEx.Chat.Completions do
     :tool_choice,
     :user,
     :verbosity,
-    :web_search_options
+    :web_search_options,
+    # Ollama extensions — passed through to Ollama's OpenAI-compatible endpoint
+    :think,
+    :options
   ]
 
   @doc """
